@@ -13,10 +13,7 @@ class ArchiveMenu : Menu() {
 
             when (val choice = inputChoice()) {
                 0 -> Archive.createArchive()
-                in 1 until showList.size - 1 -> {
-
-                    noteMenu.showNoteMenuOptions(Program.listOfArchive[choice - 1])
-                }
+                in 1 until showList.size - 1 -> noteMenu.showNoteMenuOptions(Program.listOfArchive[choice - 1])
                 showList.lastIndex -> {
                     println("\nВыходим из приложения, до свидания!")
                     return
