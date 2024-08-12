@@ -1,45 +1,47 @@
-open class ArchiveMenu : Menu() {
+class ArchiveMenu : Menu() {
 
-    companion object {
+    fun showArchiveOptions(list: MutableList<Archive>) {
+        while (true) {
+            val noteMenu = NoteMenu()
+            val listNameOfArchive = list.map { it.name }
 
-        fun showArchiveOptions(list: MutableList<Archive>) {
-            while (true) {
-                val listNameOfArchive = mutableListOf<String>()
-                list.forEach { listNameOfArchive.add(it.name) }
+            val showList = showOptions(
+                "\nСписок архивов:",
+                "Создать архив",
+                listNameOfArchive
+            )
 
-                val showList = showOptions(
-                    "\nСписок архивов:",
-                    "Создать архив",
-                    listNameOfArchive
-                )
+            when (val choice = inputChoice()) {
+                0 -> Archive.createArchive()
+                in 1 until showList.size - 1 -> {
 
-                when (val choice = inputChoice()) {
-                    0 -> Archive.createArchive()
-                    in 1 until showList.size - 1 -> NoteMenu.showNoteMenuOptions(Program.listOfArchive[choice - 1])
-                    showList.lastIndex -> {
-                        println("\nВыходим из приложения, до свидания!")
-                        return
-                    }
-
-                    else -> println("\n*Вы ввели значение, которого нет в диапазоне доступных значений - 0-${showList.lastIndex}!*")
+                    noteMenu.showNoteMenuOptions(Program.listOfArchive[choice - 1])
                 }
+                showList.lastIndex -> {
+                    println("\nВыходим из приложения, до свидания!")
+                    return
+                }
+
+                else -> showErrorWithRange(showList.lastIndex)
             }
         }
     }
 }
 
-class Archive(val name: String, val listOfNotes: MutableList<Note>) : ArchiveMenu() {
+class Archive(val name: String, val listOfNotes: MutableList<Note>) {
 
     companion object {
-        fun createArchive() {
+        fun createArchive() : Archive {
+            val menu = Menu()
             while (true) {
                 print("\nВведите название для архива: ")
-                val nameOfArchive = inputString()
-                if (nameOfArchive == "") {
+                val nameOfArchive = menu.inputString()
+                if (nameOfArchive.isBlank()) {
                     println("\n*Название архива не может быть пустым!*")
                 } else {
-                    Program.listOfArchive.add(Archive(nameOfArchive, mutableListOf()))
-                    break
+                    val archive = Archive(nameOfArchive, mutableListOf())
+                    Program.listOfArchive.add(archive)
+                    return archive
                 }
             }
         }
